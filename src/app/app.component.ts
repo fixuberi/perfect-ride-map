@@ -1,8 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
 import { MAPBOX_ACCESS_TOKEN } from 'src/mapbox-config';
 import { environment } from 'src/environments/environment';
+import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
+import { interval, take, tap } from 'rxjs';
+import { mockPoints } from './components/mock-data';
 
 @Component({
   selector: 'app-root',
@@ -10,30 +13,120 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  draw!: MapboxDraw;
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    const shiftAmount = 300; // Adjust the shift amount as needed
+
+    switch (event.key) {
+      case 'w':
+        this.map.panBy([0, -shiftAmount]);
+        break;
+      case 'a':
+        this.map.panBy([-shiftAmount, 0]);
+        break;
+      case 's':
+        this.map.panBy([0, shiftAmount]);
+        break;
+      case 'd':
+        this.map.panBy([shiftAmount, 0]);
+        break;
+    }
+  }
+
   title = 'perfect-ride-map';
   map!: mapboxgl.Map;
+  userLocation!: mapboxgl.Marker;
 
 constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
 }
 
   ngOnInit() {
+    this.initMap();
+    this.setupUserLocationTracking();
+    this.addTrackLocationControl();
+
+    this.setupMovingUserMarker();
+
+
+    this.draw = new MapboxDraw();
+    this.map.addControl(this.draw);
+    // const southWest = new mapboxgl.LngLat(this.lng, this.lat);
+    // const northEast = new mapboxgl.LngLat(this.lng +2, this.lat+2);
+    // const boundingBox = new mapboxgl.LngLatBounds(southWest, northEast);
+
+
+    this.simulateUserMovement();
+
+  }
+
+  private simulateUserMovement() {
+    interval(1000).pipe(take(30),tap((index) => console.log(index))).subscribe((index) => {this.map.fire('geolocate', mockPoints[index])})
+  }
+
+  private setupMovingUserMarker() {
+    this.map.on('geolocate', (event) => {
+      const { coords } = event;
+      const { latitude, longitude } = coords;
+
+      // Update the marker's position
+      this.userLocation.setLngLat([longitude, latitude]);
+
+      // Save the user's location changes in your desired storage or backend
+      // For example, you can make an API call to save the location changes
+      this.saveUserLocationChanges(latitude, longitude);
+    });
+  }
+
+  private setupUserLocationTracking() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.updateUserLocation(position.coords.latitude, position.coords.longitude);
+      },
+      (error) => {
+        console.log('Error occurred while getting current position: ', error);
+      }
+    );
+  }
+
+  updateUserLocation(latitude: number, longitude: number): void {
+    if (this.userLocation) {
+      this.userLocation.setLngLat([longitude, latitude]);
+    } else {
+      this.userLocation = new mapboxgl.Marker()
+        .setLngLat([longitude, latitude])
+        .addTo(this.map);
+    }
+  }
+
+  addTrackLocationControl(): void {
+    const trackLocationControl = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      showUserLocation: false
+    });
+
+    this.map.addControl(trackLocationControl);
+    trackLocationControl.on('geolocate', (event: any) => {
+      this.updateUserLocation(event?.coords.latitude, event?.coords.longitude);
+    });
+  }
+
+  private initMap() {
     this.map = new mapboxgl.Map({
-      accessToken:
-      environment.mapbox.accessToken,
+      accessToken: environment.mapbox.accessToken,
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [-74.5, 40],
       zoom: 9
     });
     this.map.addControl(new mapboxgl.NavigationControl());
-
-
-    // const southWest = new mapboxgl.LngLat(this.lng, this.lat);
-    // const northEast = new mapboxgl.LngLat(this.lng +2, this.lat+2);
-    // const boundingBox = new mapboxgl.LngLatBounds(southWest, northEast);
   }
 
-  public addSpline(spline: any): void {
+  public addSpline(spline?: any): void {
     const feature = {
       type: 'Feature',
       geometry: spline.geometry
@@ -102,4 +195,16 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
     const spline = turf.bezierSpline(points);
     return spline;
   }
+
+  passedRoutePoints: any[] = [];
+  saveUserLocationChanges(latitude: number, longitude: number) {
+    this.passedRoutePoints.push([latitude, longitude])
+  }
 }
+
+
+// ridePoints: [] //location with time
+// isRide: boolean
+//when user stop ride - ride points used o construct object of class Ride and save to persistant store
+
+
