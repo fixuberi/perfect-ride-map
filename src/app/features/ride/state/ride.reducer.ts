@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { loadFeature, featureLoaded } from './ride.actions';
+import { cacheRidePoint, startRide, stopRide } from './ride.actions';
 
 export interface RideState {
   ridePoints: any[]; //location with time,
@@ -16,6 +16,10 @@ export const rideFeatureKey = 'ride';
 
 export const reducer = createReducer(
   initialState,
-  on(loadFeature, (state) => state),
-  on(featureLoaded, (state, { data }) => ({ ...state, data }))
+  on(startRide, (state) => ({ ...state, isRide: true, ridePoints: [] })),
+  on(stopRide, (state) => ({ ...state, isRide: false })),
+  on(cacheRidePoint, (state, { point }) => ({
+    ...state,
+    ridePoints: [state.ridePoints, point],
+  }))
 );

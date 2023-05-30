@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import * as actions from './ride.actions';
 
@@ -9,8 +9,8 @@ import * as actions from './ride.actions';
 export class RideEffects {
   loadFeature$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(actions.loadFeature),
-      mergeMap(() => of(actions.featureLoaded({ data: {} })))
+      ofType(actions.startRide),
+      mergeMap(() => of(actions.startRide()))
     )
   );
 
