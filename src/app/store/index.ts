@@ -1,3 +1,4 @@
+export * from './effects';
 export * from './meta-reducers';
 export * from './reducers';
 export * from './router-selectors';

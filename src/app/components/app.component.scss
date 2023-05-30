@@ -4,3 +4,17 @@
   right: 10px;
   z-index: 1;
 }
+
+.map-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  border: 1 solid;
+  padding: 1rem;
+  background-color: grey;
+
+  &.active {
+    background-color: red;
+  }
+}

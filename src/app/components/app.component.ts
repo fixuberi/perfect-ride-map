@@ -1,10 +1,18 @@
-import { Component, HostListener, Inject, OnInit } from '@angular/core';
-import * as mapboxgl from 'mapbox-gl';
-import * as turf from '@turf/turf';
-import { MAPBOX_ACCESS_TOKEN } from 'src/mapbox-config';
-import { environment } from 'src/environments/environment';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
+import * as turf from '@turf/turf';
+import * as mapboxgl from 'mapbox-gl';
 import { interval, take, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { MAPBOX_ACCESS_TOKEN } from 'src/mapbox-config';
+import { StoreFacadeService } from '../core/services/store-facade.service';
 import { mockPoints } from './mock-data';
 
 @Component({
@@ -13,7 +21,10 @@ import { mockPoints } from './mock-data';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
+  @ViewChild('rideButton') mapButton!: ElementRef;
+
   draw!: MapboxDraw;
+  isActiveRide$ = this.storeFacadeService.isActiveRide$;
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
@@ -38,7 +49,10 @@ export class AppComponent implements OnInit {
   map!: mapboxgl.Map;
   userLocation!: mapboxgl.Marker;
 
-  constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {}
+  constructor(
+    @Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string,
+    private storeFacadeService: StoreFacadeService
+  ) {}
 
   ngOnInit() {
     this.initMap();
@@ -118,6 +132,10 @@ export class AppComponent implements OnInit {
     trackLocationControl.on('geolocate', (event: any) => {
       this.updateUserLocation(event?.coords.latitude, event?.coords.longitude);
     });
+  }
+
+  onRideButtonClick() {
+    this.storeFacadeService.toggleRide();
   }
 
   private initMap() {

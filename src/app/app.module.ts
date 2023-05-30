@@ -22,7 +22,7 @@ import * as fromApp from './store';
     StoreRouterConnectingModule.forRoot({
       serializer: fromApp.CustomRouterStateSerializer,
     }),
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([...fromApp.effects]),
     !environment.production
       ? StoreDevtoolsModule.instrument({
           name: 'Perfect Ride Map',
