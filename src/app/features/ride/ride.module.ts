@@ -11,9 +11,7 @@ import { RideEffects } from './state';
     CommonModule,
     StoreModule.forFeature(fromRide.rideFeatureKey, fromRide.reducer),
     EffectsModule.forFeature([RideEffects]),
-
-
   ],
-  declarations: [RideComponent]
+  declarations: [RideComponent],
 })
-export class RideModule { }
+export class RideModule {}

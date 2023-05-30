@@ -4,7 +4,7 @@ import * as fromApp from './reducers';
 
 // console.log actions and state
 export function logger(
-  reducer: ActionReducer<fromApp.State>,
+  reducer: ActionReducer<fromApp.State>
 ): ActionReducer<fromApp.State> {
   return (state, action) => {
     const result = reducer(state, action);

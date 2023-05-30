@@ -12,9 +12,7 @@ import * as fromApp from './store';
 import { AppComponent } from './components/app.component';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -33,8 +31,8 @@ import { AppComponent } from './components/app.component';
       : [],
   ],
   providers: [
-      { provide: MAPBOX_ACCESS_TOKEN, useValue: getMapboxAccessToken() }
+    { provide: MAPBOX_ACCESS_TOKEN, useValue: getMapboxAccessToken() },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

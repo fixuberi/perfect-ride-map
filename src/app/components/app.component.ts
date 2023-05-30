@@ -10,7 +10,7 @@ import { mockPoints } from './mock-data';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   draw!: MapboxDraw;
@@ -24,7 +24,6 @@ export class AppComponent implements OnInit {
         this.map.panBy([0, -shiftAmount]);
         break;
       case 'a':
-        this.map.panBy([-shiftAmount, 0]);
         break;
       case 's':
         this.map.panBy([0, shiftAmount]);
@@ -39,8 +38,7 @@ export class AppComponent implements OnInit {
   map!: mapboxgl.Map;
   userLocation!: mapboxgl.Marker;
 
-constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
-}
+  constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {}
 
   ngOnInit() {
     this.initMap();
@@ -49,20 +47,24 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
 
     this.setupMovingUserMarker();
 
-
     this.draw = new MapboxDraw();
     this.map.addControl(this.draw);
     // const southWest = new mapboxgl.LngLat(this.lng, this.lat);
     // const northEast = new mapboxgl.LngLat(this.lng +2, this.lat+2);
     // const boundingBox = new mapboxgl.LngLatBounds(southWest, northEast);
 
-
     this.simulateUserMovement();
-
   }
 
   private simulateUserMovement() {
-    interval(1000).pipe(take(30),tap((index) => console.log(index))).subscribe((index) => {this.map.fire('geolocate', mockPoints[index])})
+    interval(1000)
+      .pipe(
+        take(30),
+        tap((index) => console.log(index))
+      )
+      .subscribe((index) => {
+        this.map.fire('geolocate', mockPoints[index]);
+      });
   }
 
   private setupMovingUserMarker() {
@@ -82,7 +84,10 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
   private setupUserLocationTracking() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        this.updateUserLocation(position.coords.latitude, position.coords.longitude);
+        this.updateUserLocation(
+          position.coords.latitude,
+          position.coords.longitude
+        );
       },
       (error) => {
         console.log('Error occurred while getting current position: ', error);
@@ -103,10 +108,10 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
   addTrackLocationControl(): void {
     const trackLocationControl = new mapboxgl.GeolocateControl({
       positionOptions: {
-        enableHighAccuracy: true
+        enableHighAccuracy: true,
       },
       trackUserLocation: true,
-      showUserLocation: false
+      showUserLocation: false,
     });
 
     this.map.addControl(trackLocationControl);
@@ -121,7 +126,7 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [-74.5, 40],
-      zoom: 9
+      zoom: 9,
     });
     this.map.addControl(new mapboxgl.NavigationControl());
   }
@@ -129,11 +134,11 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
   public addSpline(spline?: any): void {
     const feature = {
       type: 'Feature',
-      geometry: spline.geometry
+      geometry: spline.geometry,
     };
     this.map.addSource('spline', {
       type: 'geojson',
-      data: feature as any
+      data: feature as any,
     });
     this.map.addLayer({
       id: 'spline',
@@ -141,13 +146,13 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
       source: 'spline',
       layout: {
         'line-cap': 'round',
-        'line-join': 'round'
+        'line-join': 'round',
       },
       paint: {
         'line-color': '#0000ff',
         'line-width': 3,
-        'line-opacity': 0.7
-      }
+        'line-opacity': 0.7,
+      },
     });
   }
 
@@ -156,12 +161,12 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
       type: 'Feature',
       geometry: {
         type: 'Polygon',
-        coordinates: coordinates
-      }
+        coordinates: coordinates,
+      },
     };
     this.map.addSource('polygon', {
       type: 'geojson',
-      data: feature as any
+      data: feature as any,
     });
     this.map.addLayer({
       id: 'polygon',
@@ -171,8 +176,8 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
       paint: {
         'fill-color': '#0080ff',
         'fill-opacity': 0.5,
-        'fill-outline-color': '#0000ff'
-      }
+        'fill-outline-color': '#0000ff',
+      },
     });
   }
 
@@ -187,7 +192,10 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
 
   public addMarker(lngLat: mapboxgl.LngLatLike, popupText?: string): void {
     const popup = new mapboxgl.Popup({ offset: 25 }).setText(popupText!);
-    const marker = new mapboxgl.Marker().setLngLat(lngLat).setPopup(popup).addTo(this.map);
+    const marker = new mapboxgl.Marker()
+      .setLngLat(lngLat)
+      .setPopup(popup)
+      .addTo(this.map);
   }
 
   public createSpline(coordinates: number[][]): any {
@@ -198,12 +206,9 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
 
   passedRoutePoints: any[] = [];
   saveUserLocationChanges(latitude: number, longitude: number) {
-    this.passedRoutePoints.push([latitude, longitude])
+    this.passedRoutePoints.push([latitude, longitude]);
   }
 }
 
 // add active ride overlay on map (time, distancec etc + stop\pause button)
 // add rides history list
-
-
-
