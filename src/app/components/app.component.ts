@@ -5,7 +5,7 @@ import { MAPBOX_ACCESS_TOKEN } from 'src/mapbox-config';
 import { environment } from 'src/environments/environment';
 import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { interval, take, tap } from 'rxjs';
-import { mockPoints } from './components/mock-data';
+import { mockPoints } from './mock-data';
 
 @Component({
   selector: 'app-root',
@@ -202,9 +202,8 @@ constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {
   }
 }
 
+// add active ride overlay on map (time, distancec etc + stop\pause button)
+// add rides history list
 
-// ridePoints: [] //location with time
-// isRide: boolean
-//when user stop ride - ride points used o construct object of class Ride and save to persistant store
 
 
