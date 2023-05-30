@@ -35,6 +35,7 @@ export class AppComponent implements OnInit {
         this.map.panBy([0, -shiftAmount]);
         break;
       case 'a':
+        this.map.panBy([-shiftAmount, 0]);
         break;
       case 's':
         this.map.panBy([0, shiftAmount]);
