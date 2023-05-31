@@ -9,10 +9,13 @@ import {
 import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
 import * as turf from '@turf/turf';
 import * as mapboxgl from 'mapbox-gl';
+import { GeoJSONSource } from 'mapbox-gl';
 import { interval, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { MAPBOX_ACCESS_TOKEN } from 'src/mapbox-config';
+import { RidePoint } from '../core/models/geo.models';
 import { StoreFacadeService } from '../core/services/store-facade.service';
+import { ridePointToLngLatLike } from '../core/utils/geo.utils';
 import { mockPoints } from './mock-data';
 
 @Component({
@@ -25,10 +28,11 @@ export class AppComponent implements OnInit {
 
   draw!: MapboxDraw;
   isActiveRide$ = this.storeFacadeService.isActiveRide$;
+  activeRidePoints$ = this.storeFacadeService.activeRidePoints$;
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    const shiftAmount = 300; // Adjust the shift amount as needed
+    const shiftAmount = 300;
 
     switch (event.key) {
       case 'w':
@@ -60,15 +64,55 @@ export class AppComponent implements OnInit {
     this.setupUserLocationTracking();
     this.addTrackLocationControl();
 
-    this.setupMovingUserMarker();
+    this.setupCachingUserMovement();
 
     this.draw = new MapboxDraw();
     this.map.addControl(this.draw);
     // const southWest = new mapboxgl.LngLat(this.lng, this.lat);
     // const northEast = new mapboxgl.LngLat(this.lng +2, this.lat+2);
     // const boundingBox = new mapboxgl.LngLatBounds(southWest, northEast);
-
+    this.setupRideTraceLineDisplay();
     this.simulateUserMovement();
+  }
+
+  private setupRideTraceLineDisplay() {
+    const RIDE_TRACE_LAYER_ID = 'RIDE_TRACE_LAYER_ID';
+    const RIDE_TRACE_SOURCE_ID = 'RIDE_TRACE_SOURCE_ID';
+
+    this.activeRidePoints$.subscribe((points) => {
+      if (
+        this.isLayerExists(RIDE_TRACE_LAYER_ID) &&
+        this.isSourceExists(RIDE_TRACE_SOURCE_ID)
+      ) {
+        this.udpateDataSource(points, RIDE_TRACE_SOURCE_ID);
+      } else {
+        this.addSpline(points, RIDE_TRACE_SOURCE_ID, RIDE_TRACE_LAYER_ID);
+      }
+    });
+  }
+
+  isLayerExists(layerId: string) {
+    const mapLayers = this.map.getStyle().layers;
+    return mapLayers.some((layer) => layer.id === layerId);
+  }
+
+  isSourceExists(layerId: string) {
+    const sources = this.map.getStyle().sources;
+    return Object.keys(sources).some((key) => key === layerId);
+  }
+
+  udpateDataSource(points: RidePoint[], sourceId: string) {
+    const geojson = {
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: points.map(ridePointToLngLatLike),
+      },
+      properties: {},
+    };
+
+    const source = this.map.getSource(sourceId) as GeoJSONSource;
+    source.setData(geojson as any);
   }
 
   private simulateUserMovement() {
@@ -82,7 +126,7 @@ export class AppComponent implements OnInit {
       });
   }
 
-  private setupMovingUserMarker() {
+  private setupCachingUserMovement() {
     this.map.on('geolocate', (event) => {
       const { coords } = event;
       const { latitude, longitude } = coords;
@@ -90,8 +134,6 @@ export class AppComponent implements OnInit {
       // Update the marker's position
       this.userLocation.setLngLat([longitude, latitude]);
 
-      // Save the user's location changes in your desired storage or backend
-      // For example, you can make an API call to save the location changes
       this.saveUserLocationChanges(latitude, longitude);
     });
   }
@@ -150,19 +192,26 @@ export class AppComponent implements OnInit {
     this.map.addControl(new mapboxgl.NavigationControl());
   }
 
-  public addSpline(spline?: any): void {
+  public addSpline(
+    points: RidePoint[],
+    sourceId: string,
+    layerId: string
+  ): void {
     const feature = {
       type: 'Feature',
-      geometry: spline.geometry,
+      geometry: {
+        type: 'LineString',
+        coordinates: points.map(ridePointToLngLatLike),
+      },
     };
-    this.map.addSource('spline', {
+    this.map.addSource(sourceId, {
       type: 'geojson',
       data: feature as any,
     });
     this.map.addLayer({
-      id: 'spline',
+      id: layerId,
       type: 'line',
-      source: 'spline',
+      source: sourceId,
       layout: {
         'line-cap': 'round',
         'line-join': 'round',
@@ -223,11 +272,7 @@ export class AppComponent implements OnInit {
     return spline;
   }
 
-  passedRoutePoints: any[] = [];
   saveUserLocationChanges(latitude: number, longitude: number) {
-    this.passedRoutePoints.push([latitude, longitude]);
+    this.storeFacadeService.cacheRidePoint({ latitude, longitude });
   }
 }
-
-// add active ride overlay on map (time, distancec etc + stop\pause button)
-// add rides history list

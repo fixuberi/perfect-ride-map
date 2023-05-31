@@ -1,11 +1,10 @@
 import { createReducer, on } from '@ngrx/store';
+import { RidePoint } from 'src/app/core/models/geo.models';
 import { cacheRidePoint, startRide, stopRide } from './ride.actions';
-
 export interface RideState {
-  ridePoints: any[]; //location with time,
+  ridePoints: RidePoint[];
   isRide: boolean;
 }
-//when user stop ride - ride points used o construct object of class Ride and save to persistant store
 
 const initialState: RideState = {
   ridePoints: [],
@@ -20,6 +19,6 @@ export const reducer = createReducer(
   on(stopRide, (state) => ({ ...state, isRide: false })),
   on(cacheRidePoint, (state, { point }) => ({
     ...state,
-    ridePoints: [state.ridePoints, point],
+    ridePoints: [...state.ridePoints, point],
   }))
 );
