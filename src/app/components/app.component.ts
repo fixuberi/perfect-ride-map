@@ -10,12 +10,13 @@ import * as MapboxDraw from '@mapbox/mapbox-gl-draw';
 import * as turf from '@turf/turf';
 import * as mapboxgl from 'mapbox-gl';
 import { GeoJSONSource } from 'mapbox-gl';
-import { interval, take, tap } from 'rxjs';
+import { interval } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { MAPBOX_ACCESS_TOKEN } from 'src/mapbox-config';
 import { RidePoint } from '../core/models/geo.models';
 import { StoreFacadeService } from '../core/services/store-facade.service';
 import { ridePointToLngLatLike } from '../core/utils/geo.utils';
+import { buildGeolocateEventObject } from '../core/utils/mapbox.utils';
 import { mockPoints } from './mock-data';
 
 @Component({
@@ -36,22 +37,22 @@ export class AppComponent implements OnInit {
 
     switch (event.key) {
       case 'w':
-        this.map.panBy([0, -shiftAmount]);
+        this.map!.panBy([0, -shiftAmount]);
         break;
       case 'a':
-        this.map.panBy([-shiftAmount, 0]);
+        this.map!.panBy([-shiftAmount, 0]);
         break;
       case 's':
-        this.map.panBy([0, shiftAmount]);
+        this.map!.panBy([0, shiftAmount]);
         break;
       case 'd':
-        this.map.panBy([shiftAmount, 0]);
+        this.map!.panBy([shiftAmount, 0]);
         break;
     }
   }
 
   title = 'perfect-ride-map';
-  map!: mapboxgl.Map;
+  map?: mapboxgl.Map;
   userLocation!: mapboxgl.Marker;
 
   constructor(
@@ -61,18 +62,31 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.initMap();
+    this.setDefaultBoundingBox();
     this.setupUserLocationTracking();
     this.addTrackLocationControl();
 
     this.setupCachingUserMovement();
 
-    this.draw = new MapboxDraw();
-    this.map.addControl(this.draw);
-    // const southWest = new mapboxgl.LngLat(this.lng, this.lat);
-    // const northEast = new mapboxgl.LngLat(this.lng +2, this.lat+2);
-    // const boundingBox = new mapboxgl.LngLatBounds(southWest, northEast);
+    this.addDrawTool();
+
     this.setupRideTraceLineDisplay();
     this.simulateUserMovement();
+  }
+
+  private addDrawTool() {
+    this.draw = new MapboxDraw();
+    this.map!.addControl(this.draw);
+  }
+
+  private setDefaultBoundingBox() {
+    var bounds = [
+      [33.441625353690796, 49.05362842092495], // Southwest corner [lng, lat]
+      [33.23938461532995, 49.14463779177987], // Northeast corner [lng, lat]
+    ];
+
+    // Set the map's viewport to fit the bounding box
+    this.map!.fitBounds(bounds as any, { padding: 20 });
   }
 
   private setupRideTraceLineDisplay() {
@@ -84,20 +98,22 @@ export class AppComponent implements OnInit {
         this.isLayerExists(RIDE_TRACE_LAYER_ID) &&
         this.isSourceExists(RIDE_TRACE_SOURCE_ID)
       ) {
+        console.log('udpateDataSource');
         this.udpateDataSource(points, RIDE_TRACE_SOURCE_ID);
       } else {
+        console.log('addSpline');
         this.addSpline(points, RIDE_TRACE_SOURCE_ID, RIDE_TRACE_LAYER_ID);
       }
     });
   }
 
   isLayerExists(layerId: string) {
-    const mapLayers = this.map.getStyle().layers;
+    const mapLayers = this.map?.getStyle().layers || [];
     return mapLayers.some((layer) => layer.id === layerId);
   }
 
   isSourceExists(layerId: string) {
-    const sources = this.map.getStyle().sources;
+    const sources = this.map?.getStyle().sources || [];
     return Object.keys(sources).some((key) => key === layerId);
   }
 
@@ -111,28 +127,25 @@ export class AppComponent implements OnInit {
       properties: {},
     };
 
-    const source = this.map.getSource(sourceId) as GeoJSONSource;
+    const source = this.map!.getSource(sourceId) as GeoJSONSource;
     source.setData(geojson as any);
   }
 
   private simulateUserMovement() {
-    interval(1000)
-      .pipe(
-        take(30),
-        tap((index) => console.log(index))
-      )
-      .subscribe((index) => {
-        this.map.fire('geolocate', mockPoints[index]);
-      });
+    interval(300).subscribe((index) => {
+      this.map!.fire(
+        'geolocate',
+        buildGeolocateEventObject(mockPoints[index] as number[])
+      );
+    });
   }
 
   private setupCachingUserMovement() {
-    this.map.on('geolocate', (event) => {
+    this.map!.on('geolocate', (event) => {
       const { coords } = event;
       const { latitude, longitude } = coords;
-
       // Update the marker's position
-      this.userLocation.setLngLat([longitude, latitude]);
+      this.userLocation.setLngLat([latitude, longitude]);
 
       this.saveUserLocationChanges(latitude, longitude);
     });
@@ -154,11 +167,11 @@ export class AppComponent implements OnInit {
 
   updateUserLocation(latitude: number, longitude: number): void {
     if (this.userLocation) {
-      this.userLocation.setLngLat([longitude, latitude]);
+      this.userLocation.setLngLat([latitude, longitude]);
     } else {
       this.userLocation = new mapboxgl.Marker()
-        .setLngLat([longitude, latitude])
-        .addTo(this.map);
+        .setLngLat([latitude, longitude])
+        .addTo(this.map!);
     }
   }
 
@@ -171,7 +184,7 @@ export class AppComponent implements OnInit {
       showUserLocation: false,
     });
 
-    this.map.addControl(trackLocationControl);
+    this.map!.addControl(trackLocationControl);
     trackLocationControl.on('geolocate', (event: any) => {
       this.updateUserLocation(event?.coords.latitude, event?.coords.longitude);
     });
@@ -204,11 +217,11 @@ export class AppComponent implements OnInit {
         coordinates: points.map(ridePointToLngLatLike),
       },
     };
-    this.map.addSource(sourceId, {
+    this.map!.addSource(sourceId, {
       type: 'geojson',
       data: feature as any,
     });
-    this.map.addLayer({
+    this.map!.addLayer({
       id: layerId,
       type: 'line',
       source: sourceId,
@@ -232,11 +245,11 @@ export class AppComponent implements OnInit {
         coordinates: coordinates,
       },
     };
-    this.map.addSource('polygon', {
+    this.map!.addSource('polygon', {
       type: 'geojson',
       data: feature as any,
     });
-    this.map.addLayer({
+    this.map!.addLayer({
       id: 'polygon',
       type: 'fill',
       source: 'polygon',
@@ -250,11 +263,11 @@ export class AppComponent implements OnInit {
   }
 
   public removeLayer(layerId: string): void {
-    if (this.map.getLayer(layerId)) {
-      this.map.removeLayer(layerId);
+    if (this.map!.getLayer(layerId)) {
+      this.map!.removeLayer(layerId);
     }
-    if (this.map.getSource(layerId)) {
-      this.map.removeSource(layerId);
+    if (this.map!.getSource(layerId)) {
+      this.map!.removeSource(layerId);
     }
   }
 
@@ -263,7 +276,7 @@ export class AppComponent implements OnInit {
     const marker = new mapboxgl.Marker()
       .setLngLat(lngLat)
       .setPopup(popup)
-      .addTo(this.map);
+      .addTo(this.map!);
   }
 
   public createSpline(coordinates: number[][]): any {

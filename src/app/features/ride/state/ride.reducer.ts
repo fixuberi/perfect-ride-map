@@ -8,7 +8,7 @@ export interface RideState {
 
 const initialState: RideState = {
   ridePoints: [],
-  isRide: false,
+  isRide: true,
 };
 
 export const rideFeatureKey = 'ride';
