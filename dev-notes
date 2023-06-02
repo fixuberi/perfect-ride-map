@@ -3,5 +3,4 @@
 //when user stop ride - ride points used o construct object of class Ride and save to persistant store
 // reorganize store to place feature-stores in core mocule of app and not in modules
 //refactor app component, extract map service, extract fabrics for objects and constasnts
-//provide more nice look datasource of ride
 // add ability to set bounding box, make bounding box following user location in center of screen
