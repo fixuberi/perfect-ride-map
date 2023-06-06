@@ -6,13 +6,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Subject, filter, interval, take, takeUntil } from 'rxjs';
+import { Subject, filter, take, takeUntil } from 'rxjs';
 import { MapService } from '../core/services/map.service';
 import { RideService } from '../core/services/ride.service';
 import { StoreFacadeService } from '../core/services/store-facade.service';
 import { UserLocationService } from '../core/services/user-location.service';
-import { buildGeolocateEventObject } from '../core/utils/mapbox.utils';
-import { mockPoints } from './mock-data';
 
 @Component({
   selector: 'app-root',
@@ -66,7 +64,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.userLocationService.setupUserLocationTracking();
     this.setupCachingUserMovement();
     this.setupRideTraceLineDisplay();
-    this.simulateUserMovement();
   }
 
   private setDefaultBoundingBox() {
@@ -82,15 +79,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.rideService.setupRideTraceLineDisplay(
       this.activeRidePoints$.pipe(takeUntil(this.destroy$))
     );
-  }
-
-  private simulateUserMovement() {
-    interval(300).subscribe((index) => {
-      this.mapService.map!.fire(
-        'geolocate',
-        buildGeolocateEventObject(mockPoints[index] as number[])
-      );
-    });
   }
 
   private setupCachingUserMovement() {
