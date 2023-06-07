@@ -1,13 +1,13 @@
 import { createReducer, on } from '@ngrx/store';
-import { RidePoint } from 'src/app/core/models/geo.models';
-import { cacheRidePoint, startRide, stopRide } from './ride.actions';
+import { RideLocation } from 'src/app/core/models/geo.models';
+import { cacheRideTraceLocation, startRide, stopRide } from './ride.actions';
 export interface RideState {
-  ridePoints: RidePoint[];
+  rideTrace: RideLocation[];
   isRide: boolean;
 }
 
 const initialState: RideState = {
-  ridePoints: [],
+  rideTrace: [],
   isRide: false,
 };
 
@@ -15,10 +15,10 @@ export const rideFeatureKey = 'ride';
 
 export const reducer = createReducer(
   initialState,
-  on(startRide, (state) => ({ ...state, isRide: true, ridePoints: [] })),
+  on(startRide, (state) => ({ ...state, isRide: true, rideTrace: [] })),
   on(stopRide, (state) => ({ ...state, isRide: false })),
-  on(cacheRidePoint, (state, { point }) => ({
+  on(cacheRideTraceLocation, (state, { location }) => ({
     ...state,
-    ridePoints: [...state.ridePoints, point],
+    rideTrace: [...state.rideTrace, location],
   }))
 );

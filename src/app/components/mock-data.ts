@@ -1,3 +1,5 @@
+import { RideLocation } from '../core/models/geo.models';
+
 export const points = [
   [33.4164306438968, 49.073553363319974],
   [33.41524076069501, 49.0730538435559],
@@ -98,6 +100,18 @@ export const points = [
   [33.248399760149965, 49.124280740740886],
 ];
 
+function generateRandomNumber(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}
+
+const transformedPoints: RideLocation[] = points.map((point, i) => ({
+  latitude: point[0],
+  longitude: point[1],
+  altitude: generateRandomNumber(0, 100),
+  accuracy: generateRandomNumber(0, 10),
+  timestamp: Date.now() + i * 10,
+}));
+
 export const realRideData = {
   type: 'FeatureCollection',
   features: [
@@ -106,10 +120,13 @@ export const realRideData = {
       properties: {},
       geometry: {
         type: 'LineString',
-        coordinates: [...points, ...[...points].reverse()],
+        coordinates: [
+          ...transformedPoints,
+          ...[...transformedPoints].reverse(),
+        ],
       },
     },
   ],
 };
 
-export const mockPoints = realRideData.features[0].geometry.coordinates;
+export const mockRideLocations = realRideData.features[0].geometry.coordinates;

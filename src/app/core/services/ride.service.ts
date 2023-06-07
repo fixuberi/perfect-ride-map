@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RidePoint } from '../models/geo.models';
+import { RideLocation } from '../models/geo.models';
 import { MapService } from './map.service';
 
 @Injectable({
@@ -9,7 +9,7 @@ import { MapService } from './map.service';
 export class RideService {
   constructor(private mapService: MapService) {}
 
-  setupRideTraceLineDisplay(activeRidePoints$: Observable<RidePoint[]>) {
+  setupRideTraceLineDisplay(activeRidePoints$: Observable<RideLocation[]>) {
     const RIDE_TRACE_LAYER_ID = 'RIDE_TRACE_LAYER_ID';
     const RIDE_TRACE_SOURCE_ID = 'RIDE_TRACE_SOURCE_ID';
 

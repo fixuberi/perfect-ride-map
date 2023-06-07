@@ -1,8 +1,8 @@
-export const buildGeolocateEventObject = (point: number[]) => {
+import { RideLocation } from '../models/geo.models';
+
+export const buildGeolocateEventObject = (point: RideLocation) => {
   return {
-    coords: {
-      latitude: point[0],
-      longitude: point[1],
-    },
+    coords: { ...point },
+    timestamp: point.timestamp,
   };
 };

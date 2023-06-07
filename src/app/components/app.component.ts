@@ -10,7 +10,6 @@ import { Subject, filter, take, takeUntil } from 'rxjs';
 import { MapService } from '../core/services/map.service';
 import { RideService } from '../core/services/ride.service';
 import { StoreFacadeService } from '../core/services/store-facade.service';
-import { UserLocationService } from '../core/services/user-location.service';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('rideButton') mapButton!: ElementRef;
 
   isActiveRide$ = this.storeFacadeService.isActiveRide$;
-  activeRidePoints$ = this.storeFacadeService.activeRidePoints$;
+  activeRideTraceLocations$ = this.storeFacadeService.activeRidePoints$;
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
@@ -34,7 +33,6 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private storeFacadeService: StoreFacadeService,
     private mapService: MapService,
-    private userLocationService: UserLocationService,
     private rideService: RideService
   ) {}
 
@@ -55,14 +53,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.storeFacadeService.toggleRide();
   }
 
-  saveUserLocationChanges(latitude: number, longitude: number) {
-    this.storeFacadeService.cacheRidePoint({ latitude, longitude });
-  }
-
   private setupFeatures() {
     this.setDefaultBoundingBox();
-    this.userLocationService.setupUserLocationTracking();
-    this.setupCachingUserMovement();
+    this.bindGeolocateEventToStore();
     this.setupRideTraceLineDisplay();
   }
 
@@ -77,17 +70,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private setupRideTraceLineDisplay() {
     this.rideService.setupRideTraceLineDisplay(
-      this.activeRidePoints$.pipe(takeUntil(this.destroy$))
+      this.activeRideTraceLocations$.pipe(takeUntil(this.destroy$))
     );
   }
 
-  private setupCachingUserMovement() {
-    this.mapService.map!.on('geolocate', (event) => {
-      const { coords } = event;
-      const { latitude, longitude } = coords;
-
-      this.userLocationService.updateUserLocation(latitude, longitude);
-      this.saveUserLocationChanges(latitude, longitude);
+  private bindGeolocateEventToStore() {
+    this.mapService.map!.on('geolocate', (event: any) => {
+      this.storeFacadeService.geolocateMapEvent({
+        coords: event.coords,
+        timestamp: event.timestamp,
+      });
     });
   }
 }

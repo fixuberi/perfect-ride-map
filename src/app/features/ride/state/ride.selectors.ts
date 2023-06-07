@@ -8,7 +8,7 @@ export const selectIsActiveRide = createSelector(
   (state) => state.isRide
 );
 
-export const selectActiveRidePoints = createSelector(
+export const selectActiveRideTrace = createSelector(
   selectRide,
-  (state) => state.ridePoints
+  (state) => state.rideTrace
 );

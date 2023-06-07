@@ -1,10 +1,10 @@
-export type RidePoint = {
+export interface RidePoint {
   latitude: number;
   longitude: number;
   altitude?: number;
-};
+}
 
-export type Location = RidePoint & {
+export interface RideLocation extends RidePoint {
   accuracy: number;
   timestamp: number;
-};
+}
