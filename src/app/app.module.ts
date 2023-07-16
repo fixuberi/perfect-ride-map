@@ -10,11 +10,13 @@ import { MAPBOX_ACCESS_TOKEN, getMapboxAccessToken } from 'src/mapbox-config';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app.component';
 import * as fromApp from './store';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     StoreModule.forRoot(fromApp.reducers, {
       metaReducers: fromApp.metaReducers,

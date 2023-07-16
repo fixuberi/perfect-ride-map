@@ -18,8 +18,11 @@ export const geolocateMapEvent = createAction(
         longitude: number;
         altitude: number;
         accuracy: number;
+        speed: number;
       };
       timestamp: number;
     };
   }>()
 );
+
+export const createRideSuccess = createAction('[Ride] create ride SUCCESS');

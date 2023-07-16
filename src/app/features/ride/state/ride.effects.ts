@@ -14,10 +14,11 @@ import { interval } from 'rxjs';
 import { mockRideLocations } from 'src/app/components/mock-data';
 import { RideLocation } from 'src/app/core/models/geo.models';
 import { MapService } from 'src/app/core/services/map.service';
+import { RideHttpService } from 'src/app/core/services/ride-http.service';
 import { UserLocationService } from 'src/app/core/services/user-location.service';
 import { buildGeolocateEventObject } from 'src/app/core/utils/mapbox.utils';
 import * as actions from './ride.actions';
-import { selectIsActiveRide } from './ride.selectors';
+import { selectCreateRideDto, selectIsActiveRide } from './ride.selectors';
 
 @Injectable()
 export class RideEffects {
@@ -71,9 +72,23 @@ export class RideEffects {
       filter(([, isActiveRide]) => !!isActiveRide),
       map(([action]) => {
         return actions.cacheRideTraceLocation({
-          location: action.event.coords as RideLocation,
+          location: {
+            ...action.event.coords,
+            timestamp: new Date().toISOString(),
+          } as RideLocation, //todo get speed and timestamp
         });
       })
+    )
+  );
+
+  persistRideDataOnRideStop$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.stopRide),
+      withLatestFrom(this.store.select(selectCreateRideDto)),
+      switchMap(([, createRideDto]) => {
+        return this.rideHttpService.createRide(createRideDto);
+      }),
+      map((response) => actions.createRideSuccess())
     )
   );
 
@@ -81,6 +96,7 @@ export class RideEffects {
     private actions$: Actions,
     private store: Store,
     private mapService: MapService,
-    private userLocationService: UserLocationService
+    private userLocationService: UserLocationService,
+    private rideHttpService: RideHttpService
   ) {}
 }
