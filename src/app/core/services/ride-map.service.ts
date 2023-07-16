@@ -6,7 +6,7 @@ import { MapService } from './map.service';
 @Injectable({
   providedIn: 'root',
 })
-export class RideService {
+export class RideMapService {
   constructor(private mapService: MapService) {}
 
   setupRideTraceLineDisplay(activeRidePoints$: Observable<RideLocation[]>) {

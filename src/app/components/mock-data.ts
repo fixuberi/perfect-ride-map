@@ -109,7 +109,8 @@ const transformedPoints: RideLocation[] = points.map((point, i) => ({
   longitude: point[1],
   altitude: generateRandomNumber(0, 100),
   accuracy: generateRandomNumber(0, 10),
-  timestamp: Date.now() + i * 10,
+  timestamp: new Date().toISOString(),
+  speed: generateRandomNumber(5, 30),
 }));
 
 export const realRideData = {

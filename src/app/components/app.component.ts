@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { Subject, filter, take, takeUntil } from 'rxjs';
 import { MapService } from '../core/services/map.service';
-import { RideService } from '../core/services/ride.service';
+import { RideMapService } from '../core/services/ride-map.service';
 import { StoreFacadeService } from '../core/services/store-facade.service';
 
 @Component({
@@ -33,7 +33,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private storeFacadeService: StoreFacadeService,
     private mapService: MapService,
-    private rideService: RideService
+    private rideService: RideMapService
   ) {}
 
   ngOnInit() {

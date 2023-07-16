@@ -5,6 +5,6 @@ export interface RidePoint {
 }
 
 export interface RideLocation extends RidePoint {
-  accuracy: number;
-  timestamp: number;
+  timestamp: string;
+  speed: number;
 }

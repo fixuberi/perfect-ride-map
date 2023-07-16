@@ -40,6 +40,7 @@ export class StoreFacadeService {
       longitude: number;
       altitude: number;
       accuracy: number;
+      speed: number;
     };
     timestamp: number;
   }) {
