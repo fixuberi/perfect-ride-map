@@ -6,6 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { HrMonitorService } from '@app/core/services/hr-monitor.service';
 import { Subject, filter, take, takeUntil } from 'rxjs';
 import { MapService } from '../core/services/map.service';
 import { RideMapService } from '../core/services/ride-map.service';
@@ -33,7 +34,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private storeFacadeService: StoreFacadeService,
     private mapService: MapService,
-    private rideService: RideMapService
+    private rideService: RideMapService,
+    private hrMonitorService: HrMonitorService
   ) {}
 
   ngOnInit() {
@@ -51,6 +53,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onRideButtonClick() {
     this.storeFacadeService.toggleRide();
+  }
+
+  connectSensorClick() {
+    this.hrMonitorService.setup();
   }
 
   private setupFeatures() {

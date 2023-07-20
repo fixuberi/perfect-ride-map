@@ -8,3 +8,7 @@ export interface RideLocation extends RidePoint {
   timestamp: string;
   speed: number;
 }
+
+export interface RideLocationWwithHeartRate extends RideLocation {
+  heartRate: number | null;
+}

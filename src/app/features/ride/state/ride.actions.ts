@@ -1,12 +1,12 @@
 import { createAction, props } from '@ngrx/store';
-import { RideLocation } from 'src/app/core/models/geo.models';
+import { RideLocation } from '@core/models/geo.models';
 
 export const startRide = createAction('[Ride] startRide');
 export const stopRide = createAction('[Ride] stopRide');
 export const toggleRide = createAction('[Ride] toggleRide');
 export const cacheRideTraceLocation = createAction(
   '[Ride] cacheRideTraceLocation',
-  props<{ location: RideLocation }>()
+  props<{ location: RideLocation; heartRate: number | null }>()
 );
 
 export const geolocateMapEvent = createAction(

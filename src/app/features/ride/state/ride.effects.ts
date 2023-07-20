@@ -19,6 +19,7 @@ import { UserLocationService } from 'src/app/core/services/user-location.service
 import { buildGeolocateEventObject } from 'src/app/core/utils/mapbox.utils';
 import * as actions from './ride.actions';
 import { selectCreateRideDto, selectIsActiveRide } from './ride.selectors';
+import { HrMonitorService } from '@app/core/services/hr-monitor.service';
 
 @Injectable()
 export class RideEffects {
@@ -65,17 +66,21 @@ export class RideEffects {
     { dispatch: false }
   );
 
-  cacheUserMovementWhileRide$ = createEffect(() =>
+  cacheUserMovementDataWhileRide$ = createEffect(() =>
     this.actions$.pipe(
       ofType(actions.geolocateMapEvent),
-      withLatestFrom(this.store.select(selectIsActiveRide)),
+      withLatestFrom(
+        this.store.select(selectIsActiveRide),
+        this.hrMonitorService.recentHeartRate$
+      ),
       filter(([, isActiveRide]) => !!isActiveRide),
-      map(([action]) => {
+      map(([action, , heartRate]) => {
         return actions.cacheRideTraceLocation({
           location: {
             ...action.event.coords,
             timestamp: new Date().toISOString(),
-          } as RideLocation, //todo get speed and timestamp
+          } as RideLocation,
+          heartRate: heartRate === 0 ? null : heartRate,
         });
       })
     )
@@ -97,6 +102,7 @@ export class RideEffects {
     private store: Store,
     private mapService: MapService,
     private userLocationService: UserLocationService,
-    private rideHttpService: RideHttpService
+    private rideHttpService: RideHttpService,
+    private hrMonitorService: HrMonitorService
   ) {}
 }
