@@ -1,15 +1,15 @@
 import { createReducer, on } from '@ngrx/store';
-import { RideLocation } from 'src/app/core/models/geo.models';
+import { RideLocationWwithHeartRate } from 'src/app/core/models/geo.models';
 import { cacheRideTraceLocation, startRide, stopRide } from './ride.actions';
 export interface RideState {
-  rideTrace: RideLocation[];
+  rideHistory: RideLocationWwithHeartRate[];
   startDate: string | null;
   endDate: string | null;
   isRide: boolean;
 }
 
 const initialState: RideState = {
-  rideTrace: [],
+  rideHistory: [],
   startDate: null,
   endDate: null,
   isRide: false,
@@ -22,7 +22,7 @@ export const reducer = createReducer(
   on(startRide, (state) => ({
     ...state,
     isRide: true,
-    rideTrace: [],
+    rideHistory: [],
     startDate: new Date().toISOString(),
   })),
   on(stopRide, (state) => ({
@@ -30,8 +30,8 @@ export const reducer = createReducer(
     isRide: false,
     endDate: new Date().toISOString(),
   })),
-  on(cacheRideTraceLocation, (state, { location }) => ({
+  on(cacheRideTraceLocation, (state, { location, heartRate }) => ({
     ...state,
-    rideTrace: [...state.rideTrace, location],
+    rideHistory: [...state.rideHistory, { ...location, heartRate }],
   }))
 );

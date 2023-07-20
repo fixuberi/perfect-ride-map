@@ -1,9 +1,14 @@
 <div id="map" style="width: 100%; height: 100vh"></div>
-<button
-  #rideButton
-  [ngClass]="{ active: isActiveRide$ | async }"
-  (click)="onRideButtonClick()"
-  class="map-button"
->
-  R
-</button>
+<div class="button-cotainer">
+  <button
+    #rideButton
+    [ngClass]="{ active: isActiveRide$ | async }"
+    (click)="onRideButtonClick()"
+    class="map-button"
+  >
+    R
+  </button>
+  <button #connectSensor (click)="connectSensorClick()" class="map-button">
+    Sensor
+  </button>
+</div>

@@ -5,13 +5,19 @@
   z-index: 1;
 }
 
-.map-button {
+.button-cotainer {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 1;
+
+  display: flex;
+}
+
+.map-button {
   border: 1 solid;
-  padding: 1rem;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
   background-color: grey;
 
   &.active {

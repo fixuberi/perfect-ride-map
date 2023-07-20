@@ -8,7 +8,6 @@ import {
   selectIsActiveRide,
   toggleRide,
 } from 'src/app/features/ride/state';
-import { RideLocation } from '../models/geo.models';
 
 @Injectable({
   providedIn: 'root',
@@ -28,10 +27,6 @@ export class StoreFacadeService {
 
   toggleRide() {
     this.store.dispatch(toggleRide());
-  }
-
-  cacheRidePoint(location: RideLocation) {
-    this.store.dispatch(cacheRideTraceLocation({ location }));
   }
 
   geolocateMapEvent(event: {
