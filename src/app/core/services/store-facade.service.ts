@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { map, withLatestFrom } from 'rxjs';
 import {
-  cacheRideTraceLocation,
   geolocateMapEvent,
   selectActiveRideTrace,
   selectIsActiveRide,

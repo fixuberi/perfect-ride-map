@@ -28,7 +28,12 @@
       "@env/*": ["src/environments/*"],
       "@core/*": ["src/app/core/*"],
       "@utils/*": ["src/app/core/utils/*"],
-    }
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/@angular",
+      "node_modules/@angular/material"
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

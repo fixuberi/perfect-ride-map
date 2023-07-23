@@ -1,5 +1,0 @@
-// add active ride overlay on map (time, distancec etc + stop\pause button)
-// add rides history list
-
-// reorganize store to place feature-stores in core mocule of app and not in modules
-// add ability to set bounding box, make bounding box following user location in center of screen

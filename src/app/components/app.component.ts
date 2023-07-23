@@ -1,11 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { HrMonitorService } from '@app/core/services/hr-monitor.service';
 import { Subject, filter, take, takeUntil } from 'rxjs';
 import { MapService } from '../core/services/map.service';
@@ -18,8 +11,6 @@ import { StoreFacadeService } from '../core/services/store-facade.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  @ViewChild('rideButton') mapButton!: ElementRef;
-
   isActiveRide$ = this.storeFacadeService.isActiveRide$;
   activeRideTraceLocations$ = this.storeFacadeService.activeRidePoints$;
 
