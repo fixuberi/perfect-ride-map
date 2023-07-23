@@ -15,12 +15,6 @@
 }
 
 .map-button {
-  border: 1 solid;
   padding: 0.5rem;
   margin-right: 0.5rem;
-  background-color: grey;
-
-  &.active {
-    background-color: red;
-  }
 }
