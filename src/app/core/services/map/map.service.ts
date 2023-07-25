@@ -33,27 +33,4 @@ export class AppMapService implements IMapService {
       zoom: 2,
     });
   }
-
-  setBoundingBox(bounds: number[][]) {
-    this.map!.fitBounds(bounds as any, { padding: 20 });
-  }
-
-  shiftMapByKeyPress(key: string) {
-    const shiftAmount = 300;
-
-    switch (key) {
-      case 'w':
-        this.map!.panBy([0, -shiftAmount]);
-        break;
-      case 'a':
-        this.map!.panBy([-shiftAmount, 0]);
-        break;
-      case 's':
-        this.map!.panBy([0, shiftAmount]);
-        break;
-      case 'd':
-        this.map!.panBy([shiftAmount, 0]);
-        break;
-    }
-  }
 }
