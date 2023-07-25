@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CoreModule } from '@core/core.module';
 import { MaterialModule } from '@core/material.module';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
@@ -34,6 +35,7 @@ import * as fromApp from './store';
         })
       : [],
     BrowserAnimationsModule,
+    CoreModule,
     MaterialModule,
   ],
   providers: [

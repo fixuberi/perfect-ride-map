@@ -27,6 +27,7 @@
       "@app/*": ["src/app/*"],
       "@env/*": ["src/environments/*"],
       "@core/*": ["src/app/core/*"],
+      "@features/*": ["src/app/features/*"],
       "@utils/*": ["src/app/core/utils/*"],
     },
     "typeRoots": [

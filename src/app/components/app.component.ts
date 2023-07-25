@@ -1,9 +1,19 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { HrMonitorService } from '@app/core/services/hr-monitor.service';
+import {
+  Component,
+  HostListener,
+  Inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { HrMonitorService } from '@core/services/hr-monitor.service';
+import { MapControlService } from '@core/services/map/map-control.service';
+import {
+  IMapService,
+  MAP_SERVICE,
+} from '@core/services/map/map-service.interface';
+import { RideStoreFacadeService } from '@core/services/ride-store-facade.service';
+import { RideTraceService } from '@core/services/ride-trace.service';
 import { Subject, filter, take, takeUntil } from 'rxjs';
-import { MapService } from '../core/services/map.service';
-import { RideMapService } from '../core/services/ride-map.service';
-import { StoreFacadeService } from '../core/services/store-facade.service';
 
 @Component({
   selector: 'app-root',
@@ -23,9 +33,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
-    private storeFacadeService: StoreFacadeService,
-    private mapService: MapService,
-    private rideService: RideMapService,
+    private storeFacadeService: RideStoreFacadeService,
+    @Inject(MAP_SERVICE) private mapService: IMapService,
+    private mapControlsService: MapControlService,
+    private rideTraceService: RideTraceService,
     private hrMonitorService: HrMonitorService
   ) {}
 
@@ -34,6 +45,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.mapService.mapLoaded$.pipe(filter(Boolean), take(1)).subscribe(() => {
       this.setupFeatures();
+      this.mapControlsService.addDrawToolControl();
+      this.mapControlsService.addNavigationControl();
+      this.mapControlsService.addTrackLocationControl();
     });
   }
 
@@ -66,7 +80,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private setupRideTraceLineDisplay() {
-    this.rideService.setupRideTraceLineDisplay(
+    this.rideTraceService.setupRideTraceLineDisplay(
       this.activeRideTraceLocations$.pipe(takeUntil(this.destroy$))
     );
   }
