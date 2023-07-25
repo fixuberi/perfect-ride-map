@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import { MapViewportService } from '@app/core/services/map/map-viewport.service';
 import { HrMonitorService } from '@core/services/hr-monitor.service';
 import { MapControlService } from '@core/services/map/map-control.service';
 import {
@@ -26,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    this.mapService.shiftMapByKeyPress(event.key);
+    this.mapViewportService.shiftMapByKeyPress(event.key);
   }
 
   title = 'perfect-ride-map';
@@ -36,6 +37,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private storeFacadeService: RideStoreFacadeService,
     @Inject(MAP_SERVICE) private mapService: IMapService,
     private mapControlsService: MapControlService,
+    private mapViewportService: MapViewportService,
     private rideTraceService: RideTraceService,
     private hrMonitorService: HrMonitorService
   ) {}
@@ -76,7 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
       [33.23938461532995, 49.14463779177987], // Northeast corner [lng, lat]
     ];
 
-    this.mapService.setBoundingBox(defaultBounds);
+    this.mapViewportService.setBoundingBox(defaultBounds);
   }
 
   private setupRideTraceLineDisplay() {
