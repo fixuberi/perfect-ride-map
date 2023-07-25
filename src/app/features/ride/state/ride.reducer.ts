@@ -1,5 +1,5 @@
+import { RideLocationWwithHeartRate } from '@core/models/geo.models';
 import { createReducer, on } from '@ngrx/store';
-import { RideLocationWwithHeartRate } from 'src/app/core/models/geo.models';
 import { cacheRideTraceLocation, startRide, stopRide } from './ride.actions';
 export interface RideState {
   rideHistory: RideLocationWwithHeartRate[];

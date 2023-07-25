@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
+import { RideLocation } from '@core/models/geo.models';
 import { Observable } from 'rxjs';
-import { RideLocation } from '../models/geo.models';
-import { MapService } from './map.service';
+import { MapLayerService } from './map/map-layer.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class RideMapService {
-  constructor(private mapService: MapService) {}
+export class RideTraceService {
+  constructor(private mapLayerService: MapLayerService) {}
 
   setupRideTraceLineDisplay(activeRidePoints$: Observable<RideLocation[]>) {
     const RIDE_TRACE_LAYER_ID = 'RIDE_TRACE_LAYER_ID';
@@ -15,15 +15,15 @@ export class RideMapService {
 
     activeRidePoints$.subscribe((points) => {
       if (
-        this.mapService.isLayerExists(RIDE_TRACE_LAYER_ID) &&
-        this.mapService.isSourceExists(RIDE_TRACE_SOURCE_ID)
+        this.mapLayerService.isLayerExists(RIDE_TRACE_LAYER_ID) &&
+        this.mapLayerService.isSourceExists(RIDE_TRACE_SOURCE_ID)
       ) {
-        this.mapService.udpateDataSourceCoordinates(
+        this.mapLayerService.udpateDataSourceCoordinates(
           points,
           RIDE_TRACE_SOURCE_ID
         );
       } else {
-        this.mapService.addSpline(
+        this.mapLayerService.addSpline(
           points,
           RIDE_TRACE_SOURCE_ID,
           RIDE_TRACE_LAYER_ID

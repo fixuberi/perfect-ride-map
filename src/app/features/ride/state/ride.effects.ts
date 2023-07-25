@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
   filter,
@@ -9,17 +9,20 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 
+import { mockRideLocations } from '@app/components/mock-data';
+import { RideLocation } from '@core/models/geo.models';
+import { HrMonitorService } from '@core/services/hr-monitor.service';
+import {
+  IMapService,
+  MAP_SERVICE,
+} from '@core/services/map/map-service.interface';
+import { RideHttpService } from '@core/services/ride-http.service';
+import { UserLocationService } from '@core/services/user-location.service';
+import { buildGeolocateEventObject } from '@core/utils/mapbox.utils';
 import { Store } from '@ngrx/store';
 import { interval } from 'rxjs';
-import { mockRideLocations } from 'src/app/components/mock-data';
-import { RideLocation } from 'src/app/core/models/geo.models';
-import { MapService } from 'src/app/core/services/map.service';
-import { RideHttpService } from 'src/app/core/services/ride-http.service';
-import { UserLocationService } from 'src/app/core/services/user-location.service';
-import { buildGeolocateEventObject } from 'src/app/core/utils/mapbox.utils';
 import * as actions from './ride.actions';
 import { selectCreateRideDto, selectIsActiveRide } from './ride.selectors';
-import { HrMonitorService } from '@app/core/services/hr-monitor.service';
 
 @Injectable()
 export class RideEffects {
@@ -100,7 +103,7 @@ export class RideEffects {
   constructor(
     private actions$: Actions,
     private store: Store,
-    private mapService: MapService,
+    @Inject(MAP_SERVICE) private mapService: IMapService,
     private userLocationService: UserLocationService,
     private rideHttpService: RideHttpService,
     private hrMonitorService: HrMonitorService

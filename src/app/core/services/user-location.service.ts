@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
-import { MapService } from './map.service';
+import { IMapService, MAP_SERVICE } from './map/map-service.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -8,16 +8,16 @@ import { MapService } from './map.service';
 export class UserLocationService {
   userLocation!: mapboxgl.Marker;
 
-  constructor(private maService: MapService) {}
+  constructor(@Inject(MAP_SERVICE) private mapService: IMapService) {}
 
   updateUserLocation(latitude: number, longitude: number): void {
     if (this.userLocation) {
       this.userLocation.setLngLat([latitude, longitude]);
     } else {
-      if (this.maService.map) {
+      if (this.mapService.map) {
         this.userLocation = new mapboxgl.Marker()
           .setLngLat([latitude, longitude])
-          .addTo(this.maService.map!);
+          .addTo(this.mapService.map!);
       }
     }
   }

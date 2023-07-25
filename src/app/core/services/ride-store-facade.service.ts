@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { map, withLatestFrom } from 'rxjs';
 import {
   geolocateMapEvent,
   selectActiveRideTrace,
   selectIsActiveRide,
   toggleRide,
-} from 'src/app/features/ride/state';
+} from '@features/ride/state';
+import { Store } from '@ngrx/store';
+import { map, withLatestFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class StoreFacadeService {
+export class RideStoreFacadeService {
   isActiveRide$ = this.store.select(selectIsActiveRide);
   activeRidePoints$ = this.store.select(selectActiveRideTrace).pipe(
     withLatestFrom(this.store.select(selectIsActiveRide)),
