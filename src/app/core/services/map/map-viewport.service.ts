@@ -23,6 +23,14 @@ export class MapViewportService implements IMapViewportService {
     this.map!.setZoom(zoom);
   }
 
+  setCenter(point: mapboxgl.LngLatLike) {
+    this.map?.setCenter(point);
+  }
+
+  easeTo(heading: number) {
+    this.map?.easeTo({ bearing: heading });
+  }
+
   shiftMapByKeyPress(key: string) {
     const shiftAmount = 300;
 

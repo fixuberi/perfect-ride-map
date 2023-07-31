@@ -19,6 +19,7 @@ export const geolocateMapEvent = createAction(
         altitude: number;
         accuracy: number;
         speed: number;
+        heading: number;
       };
       timestamp: number;
     };

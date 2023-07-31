@@ -1,6 +1,6 @@
+import { CreateRideDto } from '@core/dto/ride.dto';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { RideState, rideFeatureKey } from './ride.reducer';
-import { CreateRideDto } from '@core/dto/ride.dto';
 
 export const selectRide = createFeatureSelector<RideState>(rideFeatureKey);
 
@@ -9,7 +9,7 @@ export const selectIsActiveRide = createSelector(
   (state) => state.isRide
 );
 
-export const selectActiveRideTrace = createSelector(
+export const selectRideHistory = createSelector(
   selectRide,
   (state) => state.rideHistory
 );

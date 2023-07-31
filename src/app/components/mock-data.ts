@@ -1,6 +1,6 @@
 import { RideLocation } from '../core/models/geo.models';
 
-export const points = [
+const points = [
   [33.4164306438968, 49.073553363319974],
   [33.41524076069501, 49.0730538435559],
   [33.41380299804956, 49.07436931552115],
@@ -104,16 +104,78 @@ function generateRandomNumber(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
 
-const transformedPoints: RideLocation[] = points.map((point, i) => ({
+function addIntermediatePoints(coords: number[][]) {
+  const INTERMIDIATE_POINTS_COUNT = 5;
+
+  const result = [];
+  for (let i = 0; i < coords.length - 1; i++) {
+    result.push(coords[i]);
+
+    const [lng1, lat1] = coords[i];
+    const [lng2, lat2] = coords[i + 1];
+    const lngStep = (lng2 - lng1) / (INTERMIDIATE_POINTS_COUNT + 1);
+    const latStep = (lat2 - lat1) / (INTERMIDIATE_POINTS_COUNT + 1);
+
+    for (let j = 1; j <= INTERMIDIATE_POINTS_COUNT; j++) {
+      const lng = lng1 + lngStep * j;
+      const lat = lat1 + latStep * j;
+      result.push([lng, lat]);
+    }
+  }
+
+  // Add the last coordinate in the original array
+  result.push(coords[coords.length - 1]);
+
+  return result;
+}
+
+function calculateHeading(coordsStart: number[], coordsEnd: number[]) {
+  const [lng1, lat1] = coordsStart;
+  const [lng2, lat2] = coordsEnd;
+
+  const dLng = lng2 - lng1;
+  const y = Math.sin(dLng) * Math.cos(lat2);
+  const x =
+    Math.cos(lat1) * Math.sin(lat2) -
+    Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+  const heading = Math.atan2(y, x) * (180 / Math.PI);
+
+  return heading >= 0 ? heading : 360 + heading; // Convert the result to a positive value in degrees
+}
+
+function populateHeading(points: number[][]): number[][] {
+  const result = [];
+  const defaultHeadingAngle = 0;
+
+  for (let index = 0; index < points.length; index++) {
+    const currPoint = points[index];
+    const isLastPoint = index === points.length - 1;
+
+    if (isLastPoint) {
+      result.push([...currPoint, defaultHeadingAngle]);
+    } else {
+      const nextPoint = points[index + 1];
+      const headingAngle = calculateHeading(currPoint, nextPoint);
+      result.push([...currPoint, headingAngle]);
+    }
+  }
+
+  return result;
+}
+
+const transformedPoints: RideLocation[] = populateHeading(
+  addIntermediatePoints(points)
+).map((point, i) => ({
   latitude: point[0],
   longitude: point[1],
+  heading: point[2],
   altitude: generateRandomNumber(0, 100),
   accuracy: generateRandomNumber(0, 10),
   timestamp: new Date().toISOString(),
   speed: generateRandomNumber(5, 30),
 }));
 
-export const realRideData = {
+const realRideData = {
   type: 'FeatureCollection',
   features: [
     {
@@ -130,4 +192,4 @@ export const realRideData = {
   ],
 };
 
-export const mockRideLocations = realRideData.features[0].geometry.coordinates;
+export default realRideData.features[0].geometry.coordinates;

@@ -1,6 +1,7 @@
 export interface RidePoint {
   latitude: number;
   longitude: number;
+  heading: number;
   altitude?: number;
 }
 
