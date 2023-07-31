@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
+  delay,
   filter,
   map,
   switchMap,
@@ -9,7 +10,8 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 
-import { mockRideLocations } from '@app/components/mock-data';
+import mockRideLocations from '@app/components/mock-data';
+import { AppFlowService } from '@app/core/services/app-flow.service';
 import { RideLocation } from '@core/models/geo.models';
 import { HrMonitorService } from '@core/services/hr-monitor.service';
 import {
@@ -36,10 +38,21 @@ export class RideEffects {
     )
   );
 
+  setupRideFlow$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(actions.startRide),
+        withLatestFrom(this.mapService.mapLoaded$.pipe(filter(Boolean))),
+        tap(() => this.appFlowService.setupRide())
+      ),
+    { dispatch: false }
+  );
+
   simulateRide$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(actions.startRide),
+        delay(200),
         switchMap(() =>
           interval(300).pipe(
             takeUntil(this.actions$.pipe(ofType(actions.stopRide)))
@@ -106,6 +119,7 @@ export class RideEffects {
     @Inject(MAP_SERVICE) private mapService: IMapService,
     private userLocationService: UserLocationService,
     private rideHttpService: RideHttpService,
-    private hrMonitorService: HrMonitorService
+    private hrMonitorService: HrMonitorService,
+    private appFlowService: AppFlowService
   ) {}
 }
