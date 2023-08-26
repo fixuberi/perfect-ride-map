@@ -7,28 +7,35 @@ import { MapLayerService } from './map/map-layer.service';
   providedIn: 'root',
 })
 export class RideTraceService {
+  RIDE_TRACE_LAYER_ID = 'RIDE_TRACE_LAYER_ID';
+  RIDE_TRACE_SOURCE_ID = 'RIDE_TRACE_SOURCE_ID';
+
   constructor(private mapLayerService: MapLayerService) {}
 
   setupRideTraceLineDisplay(activeRidePoints$: Observable<RideLocation[]>) {
-    const RIDE_TRACE_LAYER_ID = 'RIDE_TRACE_LAYER_ID';
-    const RIDE_TRACE_SOURCE_ID = 'RIDE_TRACE_SOURCE_ID';
-
     activeRidePoints$.subscribe((points) => {
       if (
-        this.mapLayerService.isLayerExists(RIDE_TRACE_LAYER_ID) &&
-        this.mapLayerService.isSourceExists(RIDE_TRACE_SOURCE_ID)
+        this.mapLayerService.isLayerExists(this.RIDE_TRACE_LAYER_ID) &&
+        this.mapLayerService.isSourceExists(this.RIDE_TRACE_SOURCE_ID)
       ) {
         this.mapLayerService.udpateDataSourceCoordinates(
           points,
-          RIDE_TRACE_SOURCE_ID
+          this.RIDE_TRACE_SOURCE_ID
         );
       } else {
         this.mapLayerService.addSpline(
           points,
-          RIDE_TRACE_SOURCE_ID,
-          RIDE_TRACE_LAYER_ID
+          this.RIDE_TRACE_SOURCE_ID,
+          this.RIDE_TRACE_LAYER_ID
         );
       }
     });
+  }
+
+  clearRideTraceLine() {
+    this.mapLayerService.removeLayerWithSource(
+      this.RIDE_TRACE_LAYER_ID,
+      this.RIDE_TRACE_SOURCE_ID
+    );
   }
 }

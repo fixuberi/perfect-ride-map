@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 
 import { environment } from '@env/environment';
 import * as mapboxgl from 'mapbox-gl';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, filter } from 'rxjs';
 import { MAPBOX_ACCESS_TOKEN } from 'src/mapbox-config';
 import { IMapService } from './map-service.interface';
 
@@ -10,7 +10,7 @@ import { IMapService } from './map-service.interface';
 export class AppMapService implements IMapService {
   map?: mapboxgl.Map;
   mapLoadedSubject = new BehaviorSubject(false);
-  mapLoaded$ = this.mapLoadedSubject.asObservable();
+  mapLoaded$ = this.mapLoadedSubject.asObservable().pipe(filter(Boolean));
 
   constructor(@Inject(MAPBOX_ACCESS_TOKEN) public mapboxAccessToken: string) {}
 

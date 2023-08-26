@@ -48,11 +48,20 @@ export class RideEffects {
     { dispatch: false }
   );
 
+  teardoownRideFlow$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(actions.stopRide),
+        tap(() => this.appFlowService.teardownRide())
+      ),
+    { dispatch: false }
+  );
+
   simulateRide$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(actions.startRide),
-        delay(200),
+        delay(1000),
         switchMap(() =>
           interval(300).pipe(
             takeUntil(this.actions$.pipe(ofType(actions.stopRide)))
