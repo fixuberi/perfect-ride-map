@@ -15,6 +15,10 @@ export class MapViewportService implements IMapViewportService {
     return this.mapService.map;
   }
 
+  get zoomLevel() {
+    return this.map?.getZoom();
+  }
+
   setBoundingBox(bounds: number[][]) {
     this.map!.fitBounds(bounds as any, { padding: 20 });
   }

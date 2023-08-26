@@ -27,12 +27,12 @@ export class MapLayerService implements IMapLayerService {
     return Object.keys(sources).some((key) => key === layerId);
   }
 
-  removeLayerWithSource(layerId: string): void {
+  removeLayerWithSource(layerId: string, sourceId: string): void {
     if (this.map!.getLayer(layerId)) {
       this.map!.removeLayer(layerId);
     }
-    if (this.map!.getSource(layerId)) {
-      this.map!.removeSource(layerId);
+    if (this.map!.getSource(sourceId)) {
+      this.map!.removeSource(sourceId);
     }
   }
 
