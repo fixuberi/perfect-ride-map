@@ -2,18 +2,13 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-// Development
-const BACKEND_URL = '';
-
 export const environment = {
   production: false,
   DOMAIN: 'http://localhost:4200',
-  API_DOMAIN: BACKEND_URL,
-  APIs: {
-    v1: `${BACKEND_URL}/v1/api`,
-  },
+  API_DOMAIN: `api`,
   mapbox: {
-    accessToken: '',
+    accessToken:
+      'pk.eyJ1IjoiZml4MTExIiwiYSI6ImNsaGtjNDNtZDBxOXIzdG9lOTFxcXlqaDEifQ.658zn0GgDVhD-MimEu3sZg',
   },
 };
 
