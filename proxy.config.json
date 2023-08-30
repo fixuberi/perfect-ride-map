@@ -1,0 +1,8 @@
+{
+  "/api/*": {
+    "target": "https://perfect-ride-map-553dd9cef958.herokuapp.com",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
+  }
+}
