@@ -1,4 +1,4 @@
-import { RideLocation } from '../core/models/geo.models';
+import { RideLocation } from '@core/models/geo.models';
 
 const points = [
   [33.4164306438968, 49.073553363319974],

@@ -6,7 +6,9 @@ import { BehaviorSubject, filter } from 'rxjs';
 import { MAPBOX_ACCESS_TOKEN } from 'src/mapbox-config';
 import { IMapService } from './map-service.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AppMapService implements IMapService {
   map?: mapboxgl.Map;
   mapLoadedSubject = new BehaviorSubject(false);
