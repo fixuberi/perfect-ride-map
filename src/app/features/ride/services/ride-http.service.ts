@@ -1,11 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '@env/environment';
 import { CreateRideDto } from '@core/dto/ride.dto';
+import { environment } from '@env/environment';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class RideHttpService {
   constructor(private http: HttpClient) {}
 

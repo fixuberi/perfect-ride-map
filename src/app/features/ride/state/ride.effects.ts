@@ -10,19 +10,19 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 
-import mockRideLocations from '@app/components/mock-data';
 import { AppFlowService } from '@app/core/services/app-flow.service';
+import { RideHttpService } from '@app/features/ride/services/ride-http.service';
 import { RideLocation } from '@core/models/geo.models';
 import { HrMonitorService } from '@core/services/hr-monitor.service';
 import {
   IMapService,
   MAP_SERVICE,
 } from '@core/services/map/map-service.interface';
-import { RideHttpService } from '@core/services/ride-http.service';
 import { UserLocationService } from '@core/services/user-location.service';
 import { buildGeolocateEventObject } from '@core/utils/mapbox.utils';
 import { Store } from '@ngrx/store';
 import { interval } from 'rxjs';
+import mockRideLocations from './mock-data';
 import * as actions from './ride.actions';
 import { selectCreateRideDto, selectIsActiveRide } from './ride.selectors';
 
