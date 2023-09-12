@@ -6,14 +6,13 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { HrMonitorService } from '@app/core/services/hr-monitor.service';
 import {
   IMapService,
   MAP_SERVICE,
 } from '@app/core/services/map/map-service.interface';
 import { MapViewportService } from '@app/core/services/map/map-viewport.service';
 import { RideStoreFacadeService } from '@app/core/services/ride-store-facade.service';
-import { Subject } from 'rxjs';
+import { Subject, take } from 'rxjs';
 
 @Component({
   selector: 'app-ride',
@@ -34,12 +33,14 @@ export class RideComponent implements OnInit, OnDestroy {
     private storeFacadeService: RideStoreFacadeService,
     @Inject(MAP_SERVICE) private mapService: IMapService,
     private mapViewportService: MapViewportService,
-    private hrMonitorService: HrMonitorService,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.mapService.init();
+    this.mapService.mapLoaded$
+      .pipe(take(1))
+      .subscribe(() => this.onRideButtonClick());
   }
 
   ngOnDestroy(): void {
@@ -50,9 +51,5 @@ export class RideComponent implements OnInit, OnDestroy {
   onRideButtonClick() {
     this.storeFacadeService.toggleRide();
     this.changeDetectorRef.detectChanges();
-  }
-
-  connectSensorClick() {
-    this.hrMonitorService.setup();
   }
 }

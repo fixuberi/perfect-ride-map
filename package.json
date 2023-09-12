@@ -35,6 +35,7 @@
     "@turf/turf": "^6.5.0",
     "@types/mapbox__mapbox-gl-draw": "^1.4.0",
     "@types/mapbox-gl": "^2.7.11",
+    "bootstrap": "^5.3.1",
     "mapbox-gl": "^2.14.1",
     "mapbox-gl-draw": "^0.4.0",
     "rxjs": "~7.8.0",

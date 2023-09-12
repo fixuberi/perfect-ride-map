@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { parseValue } from '@utils/hr-sensor.utiils';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,11 +10,19 @@ export class HrMonitorService {
 
   private recentHeartRateSubject: BehaviorSubject<number> =
     new BehaviorSubject<number>(0);
+
   recentHeartRate$: Observable<number> =
     this.recentHeartRateSubject.asObservable();
+  isConnected$ = this.recentHeartRate$.pipe(
+    map((hr) => hr !== 0 && this.isConnectedDevice)
+  );
 
   constructor() {
     this.device = this.getStoredDevice();
+  }
+
+  get isConnectedDevice() {
+    return !!this.device;
   }
 
   setup() {

@@ -4,6 +4,7 @@ import { IMapService, MAP_SERVICE } from '../map/map-service.interface';
 import { IControlStrategy } from './control-strategy.base';
 import { DrawControlStrategy } from './draw-control.strategy';
 import { GeolocateControlStrategy } from './geolocate-control.strategy';
+import { NavigationControltrategy } from './navigation-control.strategy';
 
 export type MapControl = 'draw' | 'navigation' | 'geolocate';
 export type ControlStrategiesMap = { [key in MapControl]?: IControlStrategy };
@@ -14,7 +15,7 @@ class ControlStrategyFactory {
       case 'draw':
         return new DrawControlStrategy(map);
       case 'navigation':
-        return new GeolocateControlStrategy(map);
+        return new NavigationControltrategy(map);
       case 'geolocate':
         return new GeolocateControlStrategy(map);
       default:

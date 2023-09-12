@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="row justify-content-center my-3">
+    <div class="col-6 row justify-content-center">
+      <button
+        [color]="hrSensorButtonColor$ | async"
+        mat-fab
+        (click)="connectSensorClick()"
+        class="sensor-button"
+      >
+        <div *ngIf="hrMonitorService.isConnected$ | async">
+          {{ hrMonitorService.recentHeartRate$ | async }}
+        </div>
+        <mat-icon *ngIf="!(hrMonitorService.isConnected$ | async)">
+          <span class="material-icons-outlined"> favorite_border </span>
+        </mat-icon>
+      </button>
+    </div>
+    <div class="col-6 row justify-content-center">
+      <button
+        [color]="gpsSensorButtonColor$ | async"
+        class="sensor-button"
+        mat-fab
+      >
+        GPS
+      </button>
+    </div>
+  </div>
+
+  <div class="row justify-content-center my-3">
+    <div class="col-auto">
+      <button color="primary" mat-fab class="btn-big" (click)="ride()">
+        RIDE
+      </button>
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center flex-column gap-3 my-3 nav-menu">
+    <button mat-raised-button>History</button>
+    <button mat-raised-button>Settings</button>
+    <button mat-raised-button>Editor</button>
+  </div>
+</div>

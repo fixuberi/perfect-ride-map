@@ -1,5 +1,4 @@
-import * as mapboxgl from 'mapbox-gl';
-import { GeolocateControl } from 'mapbox-gl';
+import { GeolocateControl, Map } from 'mapbox-gl';
 import { Subject } from 'rxjs';
 import { BaseControlStrategy } from './control-strategy.base';
 
@@ -17,7 +16,7 @@ export class GeolocateControlStrategy extends BaseControlStrategy {
     geolocate: new Subject<any>(),
   };
 
-  override addControl(map: mapboxgl.Map): void {
+  override addControl(map: Map): void {
     super.addControl(map);
 
     setTimeout(() => {
@@ -25,7 +24,7 @@ export class GeolocateControlStrategy extends BaseControlStrategy {
     }, 100);
   }
 
-  constructor(map: mapboxgl.Map) {
+  constructor(map: Map) {
     super(map);
 
     this.map.on('geolocate', (event: any) => {
