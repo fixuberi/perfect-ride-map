@@ -61,6 +61,7 @@ export class RideEffects {
     () =>
       this.actions$.pipe(
         ofType(actions.startRide),
+        // filter(() => false),
         delay(1000),
         switchMap(() =>
           interval(300).pipe(
