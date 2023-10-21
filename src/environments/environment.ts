@@ -1,14 +1,14 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
+const BACKEND_URL = '';
 
 export const environment = {
   production: false,
   DOMAIN: 'http://localhost:4200',
-  API_DOMAIN: `api`,
+  API_DOMAIN: `${BACKEND_URL}/api`,
   mapbox: {
-    accessToken:
-      'pk.eyJ1IjoiZml4MTExIiwiYSI6ImNsaGtjNDNtZDBxOXIzdG9lOTFxcXlqaDEifQ.658zn0GgDVhD-MimEu3sZg',
+    accessToken: '',
   },
 };
 
